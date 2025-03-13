@@ -111,4 +111,8 @@ else:
 	with open("data", "w") as file:
 		for machineCode in machineCodes:
 			file.write((bin(machineCode))[2:].zfill(8)) 
-			file.write("\n") 
+			file.write("\n")
+		i = len(machineCodes)
+		while i < 256:
+			file.write("00000000\n")
+			i += 1 
