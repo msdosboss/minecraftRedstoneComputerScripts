@@ -114,5 +114,5 @@ else:
 			file.write("\n")
 		i = len(machineCodes)
 		while i < 256:
-			file.write("00000000\n")
+			file.write("11000000\n")
 			i += 1 
