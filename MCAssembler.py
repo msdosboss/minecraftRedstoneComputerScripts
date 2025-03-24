@@ -75,25 +75,29 @@ if len(sys.argv) != 2:
 else:
 	with open(f"{sys.argv[1]}", "r")as f:
 		assemble = f.read()
-	#print(assemble)
-
-	assemble = re.split(r'[ \n]+', assemble)
-
+	assemble = assemble.replace(" ", "")
+	assemble = re.split(r'[\n]+', assemble)
+	
 	#print(assemble)
 
 	machineCodes = []
 
 	i = 0
 
-	while i < len(assemble):
+	#one command per line or this will break
+	while i < len(assemble) - 1:
 		try:
 			if(int(assemble[i]) < 64 and int(assemble[i]) >= 0):
-				machineCodes.append(int(assemble[i]))	
+				machineCodes.append(int(assemble[i]))
+				i += 1
+				continue	
 		except:
 			pass	#this way if int cast fails we just move on and ignore
 
 		if assemble[i] in assembleDict:
 			machineCodes.append(assembleDict[assemble[i]])
+			i += 1
+			continue
 		
 		if assemble[i] == "const":
 			assembleDict[assemble[i + 1]] = int(assemble[i+2])
@@ -104,9 +108,13 @@ else:
 			assembleDict[assemble[i + 1]] = i + 2
 			i += 2
 			continue
-	
-		i += 1
-			
+
+		if (assemble[i][0] == "/" and assemble[i][1] == "/"):	#inline commands will break
+			i += 1
+			continue
+		
+		raise ValueError(f"{assemble[i]} is not an instruction")		
+
 	print(machineCodes)
 	with open("data", "w") as file:
 		for machineCode in machineCodes:
@@ -116,3 +124,4 @@ else:
 		while i < 256:
 			file.write("11000000\n")
 			i += 1 
+
